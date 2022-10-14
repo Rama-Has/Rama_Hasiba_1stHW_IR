@@ -16,7 +16,9 @@ def readEntries(fileNumber):
     mvs.append(byte_array)
 
 def mergingEntries(fileNumber): 
-    termWithIds = (bytes(mvs[fileNumber])).splitlines() 
+    termWithIds = (bytes(mvs[fileNumber])).splitlines()
+    #To ignore the title line(term, docsId) 
+    index = 1
     for index in range(len(termWithIds)):
         term = termWithIds[index].decode("utf-8").split(',')[0]
         mapVal = map(int, list(termWithIds[index].decode("utf-8").split(',')[1::]))
@@ -28,30 +30,29 @@ def mergingEntries(fileNumber):
             sortedDocsList = Union(dictionary[term], docsList)
             dictionary[term] = sortedDocsList
 
-#folderPath = input("Please inter the full path of the folder as the following format \n C:\\Users\\hp\\Desktop\\rama_hasiba_1st_HW\n") 
-
-folderPath = "C:\\Users\\hp\\Desktop\\rama_hasiba_1st_HW\\newDocs"
+folderPath = input("Please inter the full path of the folder as the following format \n C:\\Users\\hp\\Desktop\\rama_hasiba_1st_HW\n") 
+#folderPath = "C:\\Users\\hp\\Desktop\\rama_hasiba_1st_HW\\newDocs"
 fullPath = "r'" + folderPath + "'"
 filesNames = os.listdir(r'C:\\Users\\hp\\Desktop\\rama_hasiba_1st_HW\\newDocs')
 
 dictionary = {}
-index = 0
+fileIndex = 0
 mvs = []
-while index < len(filesNames): 
-    firstThread = threading.Thread(target = readEntries, args = (index, ))
+while fileIndex < len(filesNames): 
+    firstThread = threading.Thread(target = readEntries, args = (fileIndex, ))
     firstThread.start()
     firstThread.join()
 
-    secondThread = threading.Thread(target = mergingEntries, args = (index, ))
+    secondThread = threading.Thread(target = mergingEntries, args = (fileIndex, ))
     secondThread.start()
     secondThread.join()
     dictionary = dict(sorted(dictionary.items()))
 
-    if index == (len(filesNames) - 1):
+    if fileIndex == (len(filesNames) - 1):
         invertedIndexFile = open('invertedIndexFile.csv', 'w')
         for item in dictionary:
             print(item, ",", dictionary[item], file = invertedIndexFile)         
-        index = index + 1
+        fileIndex = fileIndex + 1
     else:
-        index = index + 1 
+        fileIndex = fileIndex + 1 
  
